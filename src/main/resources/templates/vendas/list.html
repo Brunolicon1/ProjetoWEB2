@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragmentos/layout :: layout(~{::head}, ~{::main},true)}">
+
+<head th:fragment="head">
+    <th:block th:replace="~{fragmentos/head :: common_head('Lista de Vendas')}"/>
+</head>
+
+<body>
+<main th:fragment="main" class="flex-grow flex flex-col items-center py-10 text-gray-200">
+    <div class="bg-[#2b2d31] shadow-xl rounded-2xl p-8 w-full max-w-5xl border border-gray-700">
+        <h1 class="text-3xl font-semibold text-gray-100 mb-8 text-center tracking-wide">
+            Lista de Vendas
+        </h1>
+
+        <div class="flex justify-end mb-5">
+            <a th:href="@{/vendas/form}"
+               class="bg-gray-500 opacity-50 pointer-events-none text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-300 shadow-md">
+                Nova Venda
+            </a>
+        </div>
+
+<!--       <div class="flex justify-end mb-5">-->
+<!--            <a th:href="@{/vendas/form}"-->
+<!--               class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">-->
+<!--                Nova Venda-->
+<!--            </a>-->
+<!--        </div> -->
+
+        <div class="overflow-x-auto rounded-xl border border-gray-700">
+            <table class="min-w-full">
+                <thead class="bg-[#34363a] text-gray-200 uppercase text-sm">
+                <tr>
+                    <th class="py-3 px-4 text-left font-medium">ID</th>
+                    <th class="py-3 px-4 text-left font-medium">Data</th>
+                    <th class="py-3 px-4 text-left font-medium">Cliente</th>
+                    <th class="py-3 px-4 text-left font-medium">Total</th>
+                    <th class="py-3 px-4 text-center font-medium">Ações</th>
+                    <th class="py-3 px-4 text-center font-medium">Detalhes</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="venda : ${vendas}"
+                    class="odd:bg-[#2e3033] even:bg-[#3a3c40] hover:bg-[#4b4e53] transition-colors duration-200">
+                    <td th:text="${venda.id}" class="py-3 px-4 text-gray-300">0</td>
+                    <td th:text="${venda.data}" class="py-3 px-4 text-gray-300">0000-00-00</td>
+
+
+                    <td class="py-3 px-4 text-gray-300">
+                        <span th:if="${venda.pessoa != null}" th:text="${venda.pessoa.getNome()}"></span>
+                    </td>
+
+
+                    <td th:text="${venda.total()}" class="py-3 px-4 text-gray-300">0.00</td>
+
+                    <td class="py-3 px-4 flex justify-center space-x-4">
+                        <a th:href="@{/vendas/edit/{id}(id=${venda.id})}"
+                           class="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                            Editar
+                        </a>
+                        <a th:href="@{/vendas/remove/{id}(id=${venda.id})}"
+                           onclick="return window.confirm('Tem certeza que deseja excluir esta venda?')"
+                           class="text-red-500 hover:text-red-400 font-medium transition-colors">
+                            Excluir
+                        </a>
+                    </td>
+
+                    <td class="py-3 px-4 text-center">
+                        <a th:href="@{/vendas/details/{id}(id=${venda.id})}"
+                           class="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+                            Detalhes
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>
