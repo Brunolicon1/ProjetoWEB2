@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragmentos/layout :: layout(~{::head}, ~{::main},false)}">
+
+
+<head th:fragment="head">
+    <th:block th:replace="~{fragmentos/head :: common_head('Página Inicial')}"/>
+</head>
+
+<body>
+
+<main th:fragment="main" class="flex-grow flex items-center justify-center">
+
+    <div class="flex flex-row gap-8">
+        <a th:href="@{/vendas/list}"
+           class="bg-[#2b2d31] shadow-xl rounded-2xl p-8 w-72 h-48 border border-gray-700
+                  flex flex-col items-center justify-center
+                  hover:bg-[#34363a] transition-all duration-300">
+            <span class="text-5xl mb-4">🛒</span>
+            <h2 class="text-2xl font-semibold text-gray-100 tracking-wide">Vendas</h2>
+        </a>
+        <a th:href="@{/pessoas/list}"
+           class="bg-[#2b2d31] shadow-xl rounded-2xl p-8 w-72 h-48 border border-gray-700
+                  flex flex-col items-center justify-center
+                  hover:bg-[#34363a] transition-all duration-300">
+            <span class="text-5xl mb-4">👥</span>
+            <h2 class="text-2xl font-semibold text-gray-100 tracking-wide">Pessoas</h2>
+        </a>
+        <a th:href="@{/produtos/list}"
+           class="bg-[#2b2d31] shadow-xl rounded-2xl p-8 w-72 h-48 border border-gray-700
+                  flex flex-col items-center justify-center
+                  hover:bg-[#34363a] transition-all duration-300">
+            <span class="text-5xl mb-4">📦</span>
+            <h2 class="text-2xl font-semibold text-gray-100 tracking-wide">Produtos</h2>
+        </a>
+    </div>
+
+</main>
+
+</body>
+</html>
