@@ -1,8 +1,8 @@
 -- =====================
 -- PRODUTOS
 -- =====================
-insert into produto(id, descricao, valor) values ( nextval('produto_seq'), 'Feijão', 20 );
-insert into produto(id, descricao, valor) values ( nextval('produto_seq'), 'Pão', 5 );
+insert into produto(id, descricao, valor) values ( nextval('produto_seq'), 'Carne', 20 );
+insert into produto(id, descricao, valor) values ( nextval('produto_seq'), 'Maionese', 5 );
 insert into produto(id, descricao, valor) values ( nextval('produto_seq'), 'Arroz', 25 );
 insert into produto(id, descricao, valor) values ( nextval('produto_seq'), 'Macarrão', 10 );
 insert into produto(id, descricao, valor) values ( nextval('produto_seq'), 'Café', 18 );

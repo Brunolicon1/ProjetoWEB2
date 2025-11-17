@@ -22,6 +22,7 @@ public class VendaController {
     @Autowired
     private VendaRepository repository;
 
+
     @Autowired
     PessoaService pessoaService;
 
@@ -45,7 +46,7 @@ public class VendaController {
     @GetMapping("/form")
     public ModelAndView form(Venda venda) {
         // Busca a lista unificada de clientes
-        List<Pessoa> todasAsPessoas = pessoaService.listarTodasPessoas();
+        List<Pessoa> todasAsPessoas = pessoaService.listarTodasPessoas(null);
         String action = (venda.getId() == 0) ? "/vendas/save" : "/vendas/update";
         ModelAndView mv = new ModelAndView("vendas/form");
         mv.addObject("formAction", action);

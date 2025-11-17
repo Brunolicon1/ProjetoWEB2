@@ -5,10 +5,7 @@ import com.example.produtosweb2.model.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -20,8 +17,16 @@ public class ProdutoController {
 
 
     @GetMapping("/list")
-    public ModelAndView list(ModelMap model) {
-        model.addAttribute("produtos", Repository.produtos());
+    public ModelAndView list(ModelMap model, @RequestParam(value = "q", required = false) String query) {
+
+        if (query != null && !query.isEmpty()) {
+            // Se tem busca, chama o método novo que criamos
+            model.addAttribute("produtos", Repository.buscarPorDescricao(query));
+        } else {
+            // Se não tem busca, traz tudo como antes
+            model.addAttribute("produtos", Repository.produtos());
+        }
+
         return new ModelAndView("produtos/list", model);
     }
 

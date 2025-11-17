@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -17,9 +18,10 @@ public class PessoaController {
     private PessoaService pessoaService;
 
     @GetMapping("/list")
-    public ModelAndView list(ModelMap model) {
+    public ModelAndView list(ModelMap model, @RequestParam(value = "q", required = false) String query) {
 
-        model.addAttribute("pessoas", pessoaService.listarTodasPessoas());
+        // Passamos a 'query' (que pode ser null ou um texto) para o serviço
+        model.addAttribute("pessoas", pessoaService.listarTodasPessoas(query));
 
         return new ModelAndView("pessoas/list", model);
     }

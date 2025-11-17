@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // responsável pela lógica de negócio
 
@@ -24,7 +25,7 @@ public class PessoaService {
     @Autowired
     private PessoaJuridicaRepository pessoaJuridicaRepo;
 
-    public List<Pessoa> listarTodasPessoas() {
+    public List<Pessoa> listarTodasPessoas(String busca) {
 
         List<PessoaFisica> fisicas = pessoaFisicaRepo.pessoasFisicas();
         List<PessoaJuridica> juridicas = pessoaJuridicaRepo.pessoasJuridicas();
@@ -34,9 +35,16 @@ public class PessoaService {
         todasAsPessoas.addAll(fisicas);
         todasAsPessoas.addAll(juridicas);
 
-        // Ordena a lista combinada pelo id
+        if (busca == null || busca.isEmpty()) {
         todasAsPessoas.sort(Comparator.comparing(Pessoa::getId));
-
         return todasAsPessoas;
+        }
+        return todasAsPessoas.stream()
+                .filter(p -> {
+                    String nome = p.getNome().toLowerCase();
+                    return nome.contains(busca.toLowerCase());
+                })
+                .sorted(Comparator.comparing(Pessoa::getNome))
+                .collect(Collectors.toList());
     }
 }
