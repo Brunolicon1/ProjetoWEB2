@@ -15,15 +15,13 @@ public class ProdutoController {
     @Autowired
     ProdutoRepository Repository;
 
-
+    //criar um metodo de busca unico, assim com o de pessoa
     @GetMapping("/list")
     public ModelAndView list(ModelMap model, @RequestParam(value = "q", required = false) String query) {
 
         if (query != null && !query.isEmpty()) {
-            // Se tem busca, chama o método novo que criamos
             model.addAttribute("produtos", Repository.buscarPorDescricao(query));
         } else {
-            // Se não tem busca, traz tudo como antes
             model.addAttribute("produtos", Repository.produtos());
         }
 
@@ -45,7 +43,6 @@ public class ProdutoController {
         return new ModelAndView("redirect:/produtos/list");
     }
 
-    // * @PathVariable é utilizado quando o valor da variável é passada diretamente na URL
     @GetMapping("/remove/{id}")
     public ModelAndView remove(@PathVariable("id") Long id) {
         Repository.remove(id);

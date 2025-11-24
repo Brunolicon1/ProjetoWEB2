@@ -9,8 +9,10 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional
@@ -39,5 +41,39 @@ public class VendaRepository {
 
     public void update(Venda venda){
         em.merge(venda);
+    }
+
+    //substituido pelo abaixo
+//    public List<Venda> buscarPorData(LocalDate dataFiltro) {
+//        // 1. Busca todas as vendas do banco
+//        List<Venda> todas = vendas(); // Reaproveita "from Venda"
+//
+//        // 2. Se não tem filtro, retorna tudo
+//        if (dataFiltro == null) {
+//            return todas;
+//        }
+//
+//        // 3. Filtra usando Java Streams (compara as datas)
+//        return todas.stream()
+//                .filter(v -> v.getData().equals(dataFiltro))
+//                .collect(Collectors.toList());
+//    }
+
+    public List<Venda> filtrarVendas(LocalDate dataFiltro, Long pessoaIdFiltro) {
+        List<Venda> todas = vendas();
+
+        return todas.stream()
+                .filter(v -> {
+                    // Condição 1: Data (se dataFiltro for null, passa direto. Se não, compara)
+                    boolean dataOk = (dataFiltro == null) || v.getData().equals(dataFiltro);
+
+                    // Condição 2: Cliente (se pessoaIdFiltro for null, passa direto. Se não, compara IDs)
+                    boolean clienteOk = (pessoaIdFiltro == null) ||
+                            (v.getPessoa() != null && v.getPessoa().getId().equals(pessoaIdFiltro));
+
+                    // Retorna verdadeiro apenas se AMBAS as condições forem satisfeitas
+                    return dataOk && clienteOk;
+                })
+                .collect(Collectors.toList());
     }
 }

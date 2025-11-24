@@ -19,7 +19,7 @@ public class PessoaJuridicaController {
 
     @Autowired
     PessoaJuridicaRepository Repository;
-
+    //como unifiquei no service nao preciso
 //    @GetMapping("/list")
 //    public ModelAndView list(ModelMap model) {
 //        model.addAttribute("pessoas", Repository.pessoasJuridicas());

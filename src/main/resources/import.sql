@@ -20,7 +20,7 @@ insert into pessoa_juridica(id,cnpj,razao_social,email,telefone) values (nextval
 -- =====================
 -- VENDAS
 -- =====================
-insert into venda(id, data, pessoa_id) values ( nextval('venda_seq'), current_date,1 );
+insert into venda(id, data, pessoa_id) values ( nextval('venda_seq'), '2023-05-20',1 );
 insert into venda(id, data,pessoa_id) values ( nextval('venda_seq'), current_date, 2);
 
 -- =====================

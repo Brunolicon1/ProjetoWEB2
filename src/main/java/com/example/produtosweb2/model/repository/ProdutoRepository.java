@@ -40,8 +40,6 @@ public class ProdutoRepository {
         em.merge(produto);
     }
 
-    // Dentro de ProdutoRepository.java
-
     public List<Produto> buscarPorDescricao(String descricao) {
         // JPQL para buscar produtos onde a descrição contém o texto (ignorando maiúsculas/minúsculas)
         String jpql = "from Produto p where lower(p.descricao) like :descricao";

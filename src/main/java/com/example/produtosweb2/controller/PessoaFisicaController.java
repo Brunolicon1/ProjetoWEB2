@@ -21,6 +21,7 @@ public class PessoaFisicaController {
     @Autowired
     PessoaFisicaRepository Repository;
 
+    //como unifiquei no service nao preciso
 //    @GetMapping("/list")
 //    public ModelAndView list(ModelMap model) {
 //        model.addAttribute("pessoas", Repository.pessoasFisicas());
