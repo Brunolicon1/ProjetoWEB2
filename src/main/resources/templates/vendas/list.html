@@ -4,8 +4,7 @@
       xmlns:th="http://www.thymeleaf.org"
       th:replace="~{fragmentos/layout :: layout(~{::head}, ~{::main}, '/vendas/list')}">
 
-<head th:fragment="head">
-    <th:block th:replace="~{fragmentos/head :: common_head('Lista de Vendas')}"/>
+<head th:replace="~{fragmentos/head :: common_head('Lista de Vendas')}">
 </head>
 
 <body>

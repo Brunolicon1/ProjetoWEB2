@@ -32,6 +32,7 @@ public class VendaController {
     // tenho que mudar para que tanto o dropdown quanto a lista de vendas sejam preenchidos pela mesma lista
     //criar metodo em venda que retorna o objeto venda (get venda) que vai retornar o objeto que ta na lista
     //permitindo que eu consiga retornar a pessoa. assim posso retornar as pessoas nos dois itens
+    // Venda venda = repository.venda(id); (possivel solucao)
     @GetMapping("/list")
     public ModelAndView list(ModelMap model,
                              @RequestParam(value = "data", required = false) LocalDate data,

@@ -4,10 +4,8 @@
       xmlns:th="http://www.thymeleaf.org"
       th:replace="~{fragmentos/layout :: layout(~{::head}, ~{::main}, false)}">
 
-<head th:fragment="head">
-    <th:block th:replace="~{fragmentos/head :: common_head(
-        ${pessoa.id == null} ? 'Cadastro de Pessoa' : 'Editando Pessoa'
-    )}" />
+<head th:replace="~{fragmentos/head :: common_head(${pessoa.id == null} ? 'Cadastro de Pessoa' : 'Editando Pessoa')}">
+
 </head>
 
 <body>

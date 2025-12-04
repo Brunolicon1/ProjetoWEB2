@@ -5,8 +5,7 @@
       th:replace="~{fragmentos/layout :: layout(~{::head}, ~{::main},'/produtos/list')}">
 
 
-<head th:fragment="head">
-    <th:block th:replace="~{fragmentos/head :: common_head('Lista de Produtos')}"/>
+<head th:replace="~{fragmentos/head :: common_head('Lista de Produtos')}">
 </head>
 
 <body>
