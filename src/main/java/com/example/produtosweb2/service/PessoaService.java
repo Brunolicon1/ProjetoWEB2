@@ -46,15 +46,15 @@ public class PessoaService {
                 .sorted(Comparator.comparing(Pessoa::getNome))
                 .collect(Collectors.toList());
     }
-//    public Pessoa buscarPessoaPorId(Long id) {
-//        if (id == null) return null;
-//
-//        PessoaFisica pf = pessoaFisicaRepo.pessoaFisica(id);
-//        if (pf != null) return pf;
-//
-//        PessoaJuridica pj = pessoaJuridicaRepo.pessoaJuridica(id);
-//        if (pj != null) return pj;
-//
-//        return null;
-//    }
+    public Pessoa buscarPessoaPorId(Long id) {
+        if (id == null) return null;
+
+        PessoaFisica pf = pessoaFisicaRepo.pessoaFisica(id);
+        if (pf != null) return pf;
+
+        PessoaJuridica pj = pessoaJuridicaRepo.pessoaJuridica(id);
+        if (pj != null) return pj;
+
+        return null;
+    }
 }
