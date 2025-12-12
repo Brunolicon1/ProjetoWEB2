@@ -6,8 +6,9 @@ import com.example.produtosweb2.model.entity.Produto;
 import com.example.produtosweb2.model.entity.Venda;
 import com.example.produtosweb2.model.repository.ProdutoRepository;
 import com.example.produtosweb2.model.repository.VendaRepository;
-import com.example.produtosweb2.service.PessoaService; // Se não tiveres Service, usa o Repository de Pessoa
-import jakarta.transaction.Transactional;
+import com.example.produtosweb2.service.PessoaService;
+import jakarta.servlet.http.HttpSession; // <--- Importante
+import jakarta.transaction.Transactional; // <--- Volta o Transactional
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -16,62 +17,50 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/vendas")
-@Scope("request")
-@Transactional
+@Scope("request") // Igual ao professor
+@Transactional    // Igual ao professor (agora vai funcionar!)
 public class VendaController {
 
     @Autowired
-    private VendaRepository repository; // Banco de Dados
+    private VendaRepository repository;
 
     @Autowired
-    private ProdutoRepository produtoRepository; // Banco de Dados
+    private ProdutoRepository produtoRepository;
 
     @Autowired
-    private PessoaService pessoaService; // Banco de Dados
+    private PessoaService pessoaService;
 
     @Autowired
-    private Venda venda; // MEMÓRIA (Sessão - O Carrinho Atual)
+    private Venda venda; // Instância da sessão
 
-    // 1. LISTAGEM (Histórico de Vendas) - Usa Repository
     @GetMapping("/list")
     public ModelAndView list(ModelMap model,
                              @RequestParam(value = "data", required = false) LocalDate data,
                              @RequestParam(value = "pessoaId", required = false) Long pessoaId) {
-
-        // Usa o repository para buscar no banco
         model.addAttribute("vendas", repository.filtrarVendas(data, pessoaId));
-
         model.addAttribute("dataSelecionada", data);
         model.addAttribute("pessoaIdSelecionada", pessoaId);
         model.addAttribute("clientes", pessoaService.listarTodasPessoas(null));
-
         return new ModelAndView("vendas/list", model);
     }
 
-    // 2. CATÁLOGO DE PRODUTOS (Antigo Form) - Usa Venda da Sessão
     @GetMapping("/form")
     public ModelAndView form() {
         ModelAndView mv = new ModelAndView("vendas/form");
-        mv.addObject("venda", venda); // Passa o carrinho atual para vermos a contagem de itens
-        mv.addObject("produtos", produtoRepository.produtos()); // Lista produtos para comprar
+        mv.addObject("venda", venda);
+        mv.addObject("produtos", produtoRepository.produtos());
         return mv;
     }
 
-    // 3. ADICIONAR AO CARRINHO - Manipula apenas a Memória
     @PostMapping("/adicionar-item")
     public ModelAndView adicionarItem(@RequestParam("produtoId") Long produtoId) {
-
-        // Busca o produto no banco apenas para ter os dados
         Produto produto = produtoRepository.produto(produtoId);
-
         if (produto != null) {
-            // Verifica se já existe no carrinho (memória)
             ItemVenda itemExistente = venda.getItens().stream()
-                    .filter(i -> i.getProduto().getId() == produtoId) // Cuidado: Long vs long
+                    .filter(i -> i.getProduto().getId() == (long) produtoId)
                     .findFirst()
                     .orElse(null);
 
@@ -88,74 +77,83 @@ public class VendaController {
         return new ModelAndView("redirect:/vendas/form");
     }
 
-    // 4. TELA DO CARRINHO - Mostra o resumo antes de salvar
     @GetMapping("/carrinho")
     public ModelAndView carrinho() {
         ModelAndView mv = new ModelAndView("vendas/carrinho");
-        mv.addObject("venda", venda); // O objeto da sessão com os itens
-        mv.addObject("pessoas", pessoaService.listarTodasPessoas(null)); // Para o Select de Clientes
+        mv.addObject("venda", venda);
+        mv.addObject("pessoas", pessoaService.listarTodasPessoas(null));
         return mv;
     }
 
+    // --- AQUI ESTÁ A MUDANÇA PARA FICAR IGUAL AO PROFESSOR ---
+    @PostMapping("/save")
+    public ModelAndView save(@RequestParam("pessoaId") Long pessoaId,
+                             @RequestParam("data") LocalDate data,
+                             HttpSession session) {
 
-    // 6. EDITAR UMA VENDA ANTIGA
+        System.out.println("--- INICIANDO SAVE ---");
+        System.out.println("ID Cliente recebido: " + pessoaId);
+        System.out.println("Data recebida: " + data);
+        System.out.println("Itens no carrinho antes de salvar: " + venda.getItens().size());
+
+        // 1. Busca e valida a Pessoa
+        Pessoa pessoa = pessoaService.buscarPessoaPorId(pessoaId); // Ajuste conforme seu service (ex: repository.pessoa(id))
+
+        if (pessoa == null) {
+            System.out.println("ERRO: Pessoa não encontrada!");
+            return new ModelAndView("redirect:/vendas/carrinho");
+        }
+
+        // 2. Popula a Venda da Sessão
+        venda.setPessoa(pessoa);
+        venda.setData(data);
+
+        // 3. Garante que todos os itens sabem quem é o pai (Venda)
+        // Isso é CRUCIAL para evitar chaves estrangeiras nulas nos itens
+        for (ItemVenda item : venda.getItens()) {
+            item.setVenda(venda);
+        }
+
+        // 4. Salva
+        repository.save(venda);
+        System.out.println("Venda salva com ID: " + venda.getId());
+
+        // 5. Limpa a sessão (Substitui por novo objeto)
+        session.setAttribute("venda", new Venda());
+
+        return new ModelAndView("redirect:/vendas/list");
+    }
+
+    // ... edits, removes e details iguais ...
+
     @GetMapping("/edit/{id}")
     public ModelAndView edit(@PathVariable("id") Long id) {
-        // Busca do banco
         Venda vendaBanco = repository.venda(id);
 
-        // Copia os dados do banco para a Sessão
+        // Carregamos os dados para a memória
         venda.setId(vendaBanco.getId());
         venda.setData(vendaBanco.getData());
         venda.setPessoa(vendaBanco.getPessoa());
-        venda.setItens(vendaBanco.getItens());
 
-        // Redireciona para o carrinho para o usuário ver os itens e editar
+        venda.getItens().clear();
+        venda.getItens().addAll(vendaBanco.getItens());
+
+        // Refazer vinculo
+        for(ItemVenda i : venda.getItens()) i.setVenda(venda);
+
         return new ModelAndView("redirect:/vendas/carrinho");
     }
 
-    // 7. REMOVER (Do Banco)
     @GetMapping("/remove/{id}")
     public ModelAndView remove(@PathVariable("id") Long id) {
         repository.remove(id);
         return new ModelAndView("redirect:/vendas/list");
     }
 
-    // 5. SALVAR FINAL
-    @PostMapping("/save")
-    public ModelAndView save(@RequestParam("pessoaId") Long pessoaId,
-                             @RequestParam("data") LocalDate data) {
-        // Nota: Removi o @ModelAttribute("venda").
-        // Usamos diretamente o "this.venda" que já está injetado na classe.
-
-        // 1. Busca a Pessoa
-        Pessoa pessoa = pessoaService.buscarPessoaPorId(pessoaId); // Ajusta o nome do método conforme o teu Service
-
-        // 2. Atualiza os dados na Venda da Sessão (MANUALMENTE)
-        // Isso evita que o Spring mude o ID para 0 acidentalmente
-        this.venda.setPessoa(pessoa);
-        this.venda.setData(data);
-
-        // 3. Salvar
-        // Se a venda já tem ID (edição), o save faz update. Se é 0, faz insert.
-        repository.save(this.venda);
-
-        // 4. Limpar a sessão
-        // CUIDADO: Fazer isso aqui dentro com @Transactional na classe pode ser perigoso.
-        // O ideal é limpar os itens, mas criar uma "nova instância" lógica.
-        limparSessao();
-
-        return new ModelAndView("redirect:/vendas/list");
-    }
-
-    // Método auxiliar para resetar o carrinho
-    private void limparSessao() {
-        // Em vez de alterar o ID do objeto atual (que o Hibernate está a vigiar),
-        // limpamos apenas o conteúdo para a próxima utilização.
-
-        venda.setId(0); // Resetamos o ID para a próxima ser uma NOVA venda
-        venda.setItens(new ArrayList<>()); // Esvazia o carrinho
-        venda.setPessoa(null);
-        venda.setData(LocalDate.now());
+    @GetMapping("/details/{id}")
+    public ModelAndView details(@PathVariable("id") Long id, ModelMap model) {
+        Venda venda = repository.venda(id);
+        model.addAttribute("venda", venda);
+        return new ModelAndView("vendas/details", model);
     }
 }
