@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,6 +14,7 @@ public class PessoaFisica extends Pessoa implements Serializable {
 
     @NotBlank(message = "O CPF é obrigatório.")
     @Size(min = 11, max = 14, message = "O CPF deve ter entre 11 e 14 caracteres.")
+    @CPF
     private String cpf;
 
     @NotBlank(message = "O nome é obrigatório.")
