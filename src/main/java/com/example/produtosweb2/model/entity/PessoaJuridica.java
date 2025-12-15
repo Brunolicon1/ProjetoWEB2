@@ -1,14 +1,20 @@
 package com.example.produtosweb2.model.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 
 @Entity
 public class PessoaJuridica  extends Pessoa implements Serializable {
 
+    @NotBlank(message = "A Razão Social é obrigatória.")
+    @Size(min = 3, message = "A Razão Social deve ter no mínimo 3 letras.")
     private String razaoSocial;
 
+    @NotBlank(message = "O CNPJ é obrigatório.")
+    @Size(min = 14, max = 18, message = "O CNPJ deve ter entre 14 e 18 caracteres.")
     private String cnpj;
 
     public String getrazaoSocial() {

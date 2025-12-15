@@ -20,7 +20,6 @@ public class PessoaController {
     @GetMapping("/list")
     public ModelAndView list(ModelMap model, @RequestParam(value = "q", required = false) String query) {
 
-        // Passamos a 'query' (que pode ser null ou um texto) para o serviço
         model.addAttribute("pessoas", pessoaService.listarTodasPessoas(query));
         return new ModelAndView("pessoas/list", model);
     }

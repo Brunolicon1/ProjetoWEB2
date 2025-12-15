@@ -1,6 +1,9 @@
 package com.example.produtosweb2.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Produto {
@@ -9,7 +12,12 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "produto_seq")
     @SequenceGenerator(name = "produto_seq", sequenceName = "produto_seq", allocationSize = 1)
     private long id;
+
+    @NotBlank(message = "A descrição é obrigatória.")
     private String descricao;
+
+    @NotNull(message = "O valor é obrigatório.")
+    @Min(value = 0, message = "O valor não pode ser negativo.")
     private Double valor;
 
     public Produto() {

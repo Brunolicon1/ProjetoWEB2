@@ -2,9 +2,11 @@ package com.example.produtosweb2.controller;
 
 import com.example.produtosweb2.model.entity.Produto;
 import com.example.produtosweb2.model.repository.ProdutoRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -38,7 +40,14 @@ public class ProdutoController {
     }
 
     @PostMapping("/save")
-    public ModelAndView save(Produto produto) {
+    public ModelAndView save(@Valid Produto produto, BindingResult result) {
+
+        if(result.hasErrors()) {
+            ModelAndView mv = new ModelAndView("produtos/form");
+            mv.addObject("formAction", "/produtos/save");
+            return mv;
+        }
+
         Repository.save(produto);
         return new ModelAndView("redirect:/produtos/list");
     }
@@ -58,7 +67,14 @@ public class ProdutoController {
     }
 
     @PostMapping("/update")
-    public ModelAndView update(Produto produto) {
+    public ModelAndView update(@Valid Produto produto, BindingResult result) {
+
+        if(result.hasErrors()) {
+            ModelAndView mv = new ModelAndView("produtos/form");
+            mv.addObject("formAction", "/produtos/update");
+            return mv;
+        }
+
         Repository.update(produto);
         return new ModelAndView("redirect:/produtos/list");
     }

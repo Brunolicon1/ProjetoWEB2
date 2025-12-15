@@ -1,6 +1,7 @@
 package com.example.produtosweb2.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
@@ -19,8 +20,11 @@ public abstract class Pessoa {
     @SequenceGenerator(name = "pessoa_seq", sequenceName = "pessoa_seq", allocationSize = 1)
     private Long id;
 
+    @NotBlank(message = "O telefone é obrigatório.")
     private String telefone;
 
+    @NotBlank(message = "O e-mail é obrigatório.")
+    @Email(message = "Digite um e-mail válido (ex: nome@dominio.com).")
     private String email;
 
     @OneToMany(mappedBy = "pessoa")
