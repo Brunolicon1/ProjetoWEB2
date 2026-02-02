@@ -30,6 +30,19 @@ public abstract class Pessoa {
     @OneToMany(mappedBy = "pessoa")
     private List<Venda> vendas = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL) // Cascade faz com que ao salvar a Pessoa, o Usuario também seja salvo
+    @JoinColumn(name = "id_usuario") // Nome da coluna no banco de dados
+    private Usuario usuario;
+
+    // Getter e Setter
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     public abstract String getNome();
 
     public String getTelefone() {

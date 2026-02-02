@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{fragmentos/layout :: layout(~{::head}, ~{::main}, '/vendas/list')}">
 
 <head th:replace="~{fragmentos/head :: common_head('Lista de Vendas')}">
@@ -12,12 +12,14 @@
     <div class="bg-[#2b2d31] shadow-xl rounded-2xl p-8 w-full max-w-6xl border border-gray-700">
 
         <h1 class="text-3xl font-semibold text-gray-100 mb-8 text-center tracking-wide">
-            Lista de Vendas
+            <span th:if="${isAdmin}">Painel de Vendas (Administrador)</span>
+            <span th:if="${!isAdmin and #authorization.expression('isAuthenticated()')}">Meus Pedidos</span>
+            <span th:if="${!#authorization.expression('isAuthenticated()')}">Histórico de Vendas</span>
         </h1>
 
         <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4">
 
-            <form th:action="@{/vendas/list}" method="get"
+            <form th:if="${isAdmin}" th:action="@{/vendas/list}" method="get"
                   class="flex flex-wrap items-center gap-3 bg-[#34363a] p-3 rounded-lg border border-gray-600 w-full xl:w-auto">
 
                 <span class="text-gray-300 text-sm font-medium hidden sm:block">Filtrar:</span>
@@ -25,14 +27,12 @@
                 <input type="date" name="data"
                        th:value="${dataSelecionada}"
                        class="bg-[#1e1f22] border border-gray-500 text-gray-200 text-sm rounded px-3 py-1.5
-                              focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                       title="Filtrar por Data">
+                              focus:outline-none focus:ring-1 focus:ring-emerald-500">
 
                 <select name="pessoaId"
                         class="bg-[#1e1f22] border border-gray-500 text-gray-200 text-sm rounded px-3 py-1.5
-                               focus:outline-none focus:ring-1 focus:ring-emerald-500 min-w-[150px] max-w-[250px]">
+                               focus:outline-none focus:ring-1 focus:ring-emerald-500 min-w-[150px]">
                     <option value="" selected>Todos os Clientes</option>
-
                     <option th:each="c : ${clientes}"
                             th:value="${c.id}"
                             th:text="${c.nome}"
@@ -40,26 +40,32 @@
                     </option>
                 </select>
 
-                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white p-1.5 rounded transition-colors shadow-sm" title="Aplicar Filtros">
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white p-1.5 rounded transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </button>
-
-                <a th:if="${dataSelecionada != null or pessoaIdSelecionada != null}"
-                   th:href="@{/vendas/list}"
-                   class="text-gray-400 hover:text-red-400 p-1.5 rounded transition-colors border border-transparent hover:border-red-400/30" title="Limpar Filtros">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </a>
             </form>
 
-            <div class="self-end xl:self-auto">
+            <div class="flex-grow" th:if="${!isAdmin}"></div>
+
+            <div sec:authorize="isAuthenticated()" class="self-end xl:self-auto">
                 <a th:href="@{/vendas/form}"
-                   class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-300 shadow-md block">
+                   class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-all shadow-md block">
                     Nova Venda
                 </a>
             </div>
         </div>
 
-        <div class="overflow-x-auto rounded-xl border border-gray-700">
+        <div sec:authorize="!isAuthenticated()"
+             class="bg-[#3a3c40] p-10 rounded-xl border border-dashed border-gray-500 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <h2 class="text-xl font-medium text-gray-300">Acesso Restrito</h2>
+            <p class="text-gray-400 mt-2">Você precisa estar logado para visualizar suas vendas ou o painel administrativo.</p>
+            <a th:href="@{/login}" class="inline-block mt-4 text-emerald-400 hover:underline">Ir para o Login</a>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" class="overflow-x-auto rounded-xl border border-gray-700">
             <table class="min-w-full">
                 <thead class="bg-[#34363a] text-gray-200 uppercase text-sm">
                 <tr>
@@ -67,8 +73,8 @@
                     <th class="py-3 px-4 text-left font-medium">Data</th>
                     <th class="py-3 px-4 text-left font-medium">Cliente</th>
                     <th class="py-3 px-4 text-left font-medium">Total</th>
-                    <th class="py-3 px-4 text-center font-medium">Ações</th>
                     <th class="py-3 px-4 text-center font-medium">Detalhes</th>
+                    <th th:if="${isAdmin}" class="py-3 px-4 text-center font-medium">Ações ADM</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -76,38 +82,31 @@
                     class="odd:bg-[#2e3033] even:bg-[#3a3c40] hover:bg-[#4b4e53] transition-colors duration-200">
 
                     <td th:text="${venda.id}" class="py-3 px-4 text-gray-300">0</td>
-
-                    <td th:text="${#temporals.format(venda.data, 'dd/MM/yyyy')}" class="py-3 px-4 text-gray-300">00/00/0000</td>
-
+                    <td th:text="${#temporals.format(venda.data, 'dd/MM/yyyy')}" class="py-3 px-4 text-gray-300"></td>
                     <td class="py-3 px-4 text-gray-300">
                         <span th:if="${venda.pessoa != null}" th:text="${venda.pessoa.getNome()}"></span>
                     </td>
-
-                    <td th:text="'R$ ' + ${venda.total()}" class="py-3 px-4 text-gray-300">0.00</td>
-
-                    <td class="py-3 px-4 flex justify-center space-x-4">
-                        <a th:href="@{/vendas/edit/{id}(id=${venda.id})}"
-                           class="text-blue-400 hover:text-blue-300 font-medium transition-colors">
-                            Editar
-                        </a>
-                        <a th:href="@{/vendas/remove/{id}(id=${venda.id})}"
-                           onclick="return window.confirm('Tem certeza que deseja excluir esta venda?')"
-                           class="text-red-500 hover:text-red-400 font-medium transition-colors">
-                            Excluir
-                        </a>
-                    </td>
+                    <td th:text="'R$ ' + ${venda.total()}" class="py-3 px-4 text-gray-300"></td>
 
                     <td class="py-3 px-4 text-center">
                         <a th:href="@{/vendas/details/{id}(id=${venda.id})}"
                            class="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
-                            Detalhes
+                            Ver Detalhes
                         </a>
+                    </td>
+
+                    <td th:if="${isAdmin}" class="py-3 px-4 flex justify-center space-x-4">
+                        <a th:href="@{/vendas/edit/{id}(id=${venda.id})}"
+                           class="text-blue-400 hover:text-blue-300 font-medium transition-colors">Editar</a>
+                        <a th:href="@{/vendas/remove/{id}(id=${venda.id})}"
+                           onclick="return window.confirm('Tem certeza que deseja excluir esta venda?')"
+                           class="text-red-500 hover:text-red-400 font-medium transition-colors">Excluir</a>
                     </td>
                 </tr>
 
                 <tr th:if="${#lists.isEmpty(vendas)}">
-                    <td colspan="6" class="py-8 text-center text-gray-400 italic">
-                        Nenhuma venda encontrada com os filtros selecionados.
+                    <td th:colspan="${isAdmin ? 6 : 5}" class="py-8 text-center text-gray-400 italic">
+                        Nenhuma venda encontrada.
                     </td>
                 </tr>
                 </tbody>

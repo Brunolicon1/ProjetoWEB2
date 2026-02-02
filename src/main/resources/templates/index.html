@@ -2,7 +2,7 @@
 
 <html lang="pt-BR"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragmentos/layout :: layout(~{::head}, ~{::main},false)}">
+      th:replace="~{fragmentos/layout :: layout(~{::head}, ~{::main},false)}" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 
 <head th:replace="~{fragmentos/head :: common_head('Página Inicial')}">
@@ -20,6 +20,7 @@
             <span class="text-5xl mb-4">🛒</span>
             <h2 class="text-2xl font-semibold text-gray-100 tracking-wide">Vendas</h2>
         </a>
+
         <a th:href="@{/pessoas/list}"
            class="bg-[#2b2d31] shadow-xl rounded-2xl p-8 w-72 h-48 border border-gray-700
                   flex flex-col items-center justify-center
@@ -27,7 +28,9 @@
             <span class="text-5xl mb-4">👥</span>
             <h2 class="text-2xl font-semibold text-gray-100 tracking-wide">Pessoas</h2>
         </a>
-        <a th:href="@{/produtos/list}"
+
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/produtos/list}"
            class="bg-[#2b2d31] shadow-xl rounded-2xl p-8 w-72 h-48 border border-gray-700
                   flex flex-col items-center justify-center
                   hover:bg-[#34363a] transition-all duration-300">
@@ -37,6 +40,5 @@
     </div>
 
 </main>
-
 </body>
 </html>

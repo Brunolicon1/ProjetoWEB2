@@ -32,3 +32,12 @@ insert into itemvenda(id, quantidade, produto_id, venda_id) values ( nextval('it
 insert into itemvenda(id, quantidade, produto_id, venda_id) values ( nextval('itemvenda_seq'), 4, 4, 2 );
 insert into itemvenda(id, quantidade, produto_id, venda_id) values ( nextval('itemvenda_seq'), 1, 5, 2 );
 
+-- =====================
+-- ROLES
+-- =====================
+INSERT INTO tb_role (nome) VALUES ('ROLE_ADMIN');
+INSERT INTO tb_role (nome) VALUES ('ROLE_USER');
+
+INSERT INTO tb_usuario (username, password) VALUES ('admin', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOn2');
+
+INSERT INTO tb_usuarios_roles (id_usuario, id_role) VALUES (1, 1);

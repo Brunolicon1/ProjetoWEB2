@@ -6,6 +6,7 @@ import com.example.produtosweb2.model.entity.PessoaJuridica;
 import com.example.produtosweb2.model.repository.PessoaFisicaRepository;
 import com.example.produtosweb2.model.repository.PessoaJuridicaRepository;
 
+import com.example.produtosweb2.model.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class PessoaService {
+
+    @Autowired
+    private PessoaRepository repository;
 
     @Autowired
     private PessoaFisicaRepository pessoaFisicaRepo;
@@ -57,4 +61,10 @@ public class PessoaService {
 
         return null;
     }
+
+    public List<Pessoa> buscarPorUsuario(String username) {
+        return repository.findByUsuarioUsername(username);
+    }
+
+
 }

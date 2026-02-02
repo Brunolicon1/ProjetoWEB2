@@ -38,6 +38,17 @@ public class VendaRepository {
         Venda v = em.find(Venda.class, id);
         em.remove(v);
     }
+    public List<Venda> buscarPorUsuario(String username) {
+        List<Venda> todas = vendas();
+
+        return todas.stream()
+                .filter(v -> v.getPessoa() != null &&
+                        v.getPessoa().getUsuario() != null &&
+                        v.getPessoa().getUsuario().getUsername().equals(username))
+                .collect(Collectors.toList());
+    }
+
+
 
     public void update(Venda venda){
         em.merge(venda);

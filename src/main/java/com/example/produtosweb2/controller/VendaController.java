@@ -9,6 +9,7 @@ import com.example.produtosweb2.model.repository.VendaRepository;
 import com.example.produtosweb2.service.PessoaService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/vendas")
@@ -39,14 +41,37 @@ public class VendaController {
     @GetMapping("/list")
     public ModelAndView list(ModelMap model,
                              @RequestParam(value = "data", required = false) LocalDate data,
-                             @RequestParam(value = "pessoaId", required = false) Long pessoaId) {
-        model.addAttribute("vendas", repository.filtrarVendas(data, pessoaId));
+                             @RequestParam(value = "pessoaId", required = false) Long pessoaId,
+                             Authentication authentication) {
+
+        List<Venda> listaVendas = new java.util.ArrayList<>();
+        boolean isAdmin = false;
+
+        // 1. Verificamos se existe alguém logado
+        if (authentication != null && authentication.isAuthenticated()) {
+
+            // 2. Checamos se é ADMIN
+            isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+            if (isAdmin) {
+                // ADMIN: Filtra por data e pessoa (ou traz tudo)
+                listaVendas = repository.filtrarVendas(data, pessoaId);
+                model.addAttribute("clientes", pessoaService.listarTodasPessoas(null));
+            } else {
+                // USUÁRIO: Traz apenas as dele pelo username
+                listaVendas = repository.buscarPorUsuario(authentication.getName());
+            }
+        }
+
+        // Se for visitante (authentication == null), listaVendas continuará vazia []
+        model.addAttribute("vendas", listaVendas);
+        model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("dataSelecionada", data);
         model.addAttribute("pessoaIdSelecionada", pessoaId);
-        model.addAttribute("clientes", pessoaService.listarTodasPessoas(null));
+
         return new ModelAndView("vendas/list", model);
     }
-
     @GetMapping("/form")
     public ModelAndView form() {
         ModelAndView mv = new ModelAndView("vendas/form");
