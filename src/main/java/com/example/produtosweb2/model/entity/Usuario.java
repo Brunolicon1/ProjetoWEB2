@@ -21,7 +21,6 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    // Relacionamento Many-to-Many conforme o enunciado
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tb_usuarios_roles",
@@ -30,11 +29,10 @@ public class Usuario implements UserDetails {
     )
     private List<Role> roles = new ArrayList<>();
 
-    // Métodos da interface UserDetails (Obrigatórios para o Spring Security)
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles; // A classe Role já implementa GrantedAuthority
+        return this.roles;
     }
 
     @Override

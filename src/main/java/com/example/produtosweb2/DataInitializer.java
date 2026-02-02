@@ -50,7 +50,6 @@ public class DataInitializer {
         if (count == 0) {
             Usuario admin = new Usuario();
             admin.setUsername("admin");
-            // Define a senha como 'admin' (ou a que você preferir)
             admin.setPassword(passwordEncoder.encode("admin"));
 
             // Adiciona a Role ao usuário

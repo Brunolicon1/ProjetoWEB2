@@ -2,62 +2,69 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login - ProdutosWeb2</title>
+    <title>Login - Sistema de Vendas</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#1e1f22] flex items-center justify-center h-screen px-4">
+<body class="bg-[#202225] text-gray-100 flex items-center justify-center h-screen">
 
-<div class="bg-[#2b2d31] shadow-2xl rounded-2xl p-8 w-full max-w-md border border-gray-700">
+<div class="bg-[#2b2d31] p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700">
 
-    <h2 class="text-3xl font-semibold text-gray-100 mb-8 text-center tracking-wide">
-        Bem-vindo
-    </h2>
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-emerald-500 mb-2">Bem-vindo</h1>
+        <p class="text-gray-400 text-sm">Entre com suas credenciais para acessar</p>
+    </div>
 
-    <div th:if="${param.error}" class="mb-5 p-3 bg-red-900/30 text-red-400 rounded-lg border border-red-800 text-sm">
+    <div th:if="${param.error}" class="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg mb-6 text-sm text-center">
         Usuário ou senha inválidos.
     </div>
 
-    <div th:if="${param.logout}" class="mb-5 p-3 bg-emerald-900/30 text-emerald-400 rounded-lg border border-emerald-800 text-sm">
+    <div th:if="${param.logout}" class="bg-blue-500/10 border border-blue-500 text-blue-400 px-4 py-3 rounded-lg mb-6 text-sm text-center">
         Você saiu do sistema com sucesso.
+    </div>
+
+    <div th:if="${param.success}" class="bg-emerald-500/10 border border-emerald-500 text-emerald-400 px-4 py-3 rounded-lg mb-6 text-sm text-center">
+        Cadastro realizado! Faça login.
     </div>
 
     <form th:action="@{/login}" method="post" class="space-y-6">
 
         <div>
-            <label for="username" class="block text-gray-300 text-sm font-medium mb-2">Usuário</label>
-            <input type="text" id="username" name="username"
-                   class="w-full px-4 py-2.5 bg-[#1e1f22] border border-gray-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all"
-                   placeholder="Seu usuário" required>
+            <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Usuário</label>
+            <input type="text" id="username" name="username" required autofocus
+                   class="w-full px-4 py-2 bg-[#1e1f22] border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder-gray-500 transition-colors"
+                   placeholder="Seu login (ex: admin)">
         </div>
 
         <div>
-            <label for="password" class="block text-gray-300 text-sm font-medium mb-2">Senha</label>
-            <input type="password" id="password" name="password"
-                   class="w-full px-4 py-2.5 bg-[#1e1f22] border border-gray-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all"
-                   placeholder="Sua senha" required>
-        </div>
-
-        <div class="flex items-center justify-between">
-            <label class="flex items-center text-sm text-gray-400 cursor-pointer">
-                <input type="checkbox" name="remember-me" class="mr-2 rounded border-gray-600 bg-[#1e1f22] text-emerald-600 focus:ring-emerald-600">
-                Lembrar-me
-            </label>
+            <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
+            <input type="password" id="password" name="password" required
+                   class="w-full px-4 py-2 bg-[#1e1f22] border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder-gray-500 transition-colors"
+                   placeholder="Sua senha">
         </div>
 
         <button type="submit"
-                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
+                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow-md transition-all duration-200">
             Entrar
         </button>
 
-        <div class="pt-4 border-t border-gray-700 text-center">
-            <p class="text-gray-400 text-sm mb-4">Ainda não tem uma conta?</p>
-            <a th:href="@{/pessoas/list.html}"
-               class="inline-block w-full border border-gray-600 text-gray-200 font-semibold py-2.5 rounded-lg hover:bg-gray-700 transition-all duration-300">
-                Cadastre-se
+    </form>
+
+    <div class="mt-8 pt-6 border-t border-gray-700 text-center">
+        <p class="text-gray-400 text-sm mb-3">Não tem uma conta?</p>
+
+        <div class="flex justify-center gap-4 text-sm">
+            <a th:href="@{/pessoafisica/form}"
+               class="text-emerald-400 hover:text-emerald-300 hover:underline transition-colors">
+                Criar Pessoa Física
+            </a>
+            <span class="text-gray-600">|</span>
+            <a th:href="@{/pessoajuridica/form}"
+               class="text-emerald-400 hover:text-emerald-300 hover:underline transition-colors">
+                Criar Pessoa Jurídica
             </a>
         </div>
-    </form>
-</div>
+    </div>
 
+</div>
 </body>
 </html>

@@ -11,14 +11,11 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Ex: ROLE_ADMIN, ROLE_USER
     @Column(unique = true, nullable = false)
     private String nome;
 
-    // Construtor padrão
     public Role() {}
 
-    // O Spring Security usa esse método para saber o nome da permissão
     @Override
     public String getAuthority() {
         return nome;

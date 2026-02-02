@@ -31,7 +31,7 @@ public class PessoaFisicaController {
     @GetMapping("/form")
     public ModelAndView form(PessoaFisica pessoaFisica) {
         if (pessoaFisica.getUsuario() == null) {
-            pessoaFisica.setUsuario(new Usuario()); // Garante que o objeto Usuario exista para o form
+            pessoaFisica.setUsuario(new Usuario());
         }
         ModelAndView mv = new ModelAndView("pessoas/form");
         mv.addObject("pessoa", pessoaFisica);
@@ -47,27 +47,22 @@ public class PessoaFisicaController {
             return mv;
         }
 
-        // Lógica para o novo Utilizador e Segurança
         if (pessoaFisica.getUsuario() != null && pessoaFisica.getId() == null) {
             Usuario usuario = pessoaFisica.getUsuario();
 
-            // 1. Criptografar a senha (Obrigatório no Spring Security)
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
-            // 2. Buscar a Role padrão "ROLE_USER" no banco
             Role rolePadrao = roleRepository.buscarPorNome("ROLE_USER");
 
             if (rolePadrao != null) {
                 usuario.getRoles().add(rolePadrao);
             }
 
-            // Garante que o usuário aponte para o username escolhido
             usuario.setUsername(usuario.getUsername());
         }
 
         repository.save(pessoaFisica);
 
-        // Após o cadastro bem-sucedido, redireciona para o login
         return new ModelAndView("redirect:/login?success");
     }
 
@@ -81,7 +76,6 @@ public class PessoaFisicaController {
 
     @PostMapping("/update")
     public ModelAndView update(@ModelAttribute("pessoa") @Valid PessoaFisica pessoaFisica, BindingResult result) {
-        // Validação no Update
         if(result.hasErrors()) {
             ModelAndView mv = new ModelAndView("pessoas/form");
             mv.addObject("formAction", "/pessoafisica/update");
